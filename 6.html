@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css.css"/>
+		<style>
+			body{
+				background: #333;
+				margin:0;
+				overflow: hidden;
+			}
+			ul{
+				margin:0;
+				padding:0;
+				list-style:none;
+			}
+			#img{
+				width:100%;
+				height:100%;
+				position:absolute;
+				z-index: -1;;
+				left: 0;
+				top: 0;
+			}
+			img{
+				border:none;
+				vertical-align: top;
+				width:100%;
+				height:100%;
+			}
+			
+			#cubeBox{
+				width:100%;
+				perspective: 1500px;
+				margin: 200px auto;
+			}
+			#cubeList{
+				width:200px;
+				height:200px;
+				position:relative;
+				transform-style: preserve-3d;
+				transform-origin: center center -100px;
+				margin-left:700px;
+			}
+			#cubeList li{
+				width:200px;
+				height:200px;
+				position:absolute;
+				perspective: 1500px;
+				transform-style: preserve-3d;
+			}
+			li:nth-of-type(1){
+				top:-200px;
+				transform-origin: bottom;
+				transform: rotateX(90deg);
+			}
+			li:nth-of-type(2){
+				left:-200px;
+				transform-origin:right;
+				transform:rotateY(-90deg);
+			}
+			li:nth-of-type(3){
+				top:0;
+				transform:translateZ(-200px);
+			}
+			li:nth-of-type(4){
+				left:200px;
+				transform-origin:left;
+				transform:rotateY(90deg);
+			}
+			li:nth-of-type(5){
+				top:200px;
+				transform-origin:top;
+				transform:rotateX(-90deg);
+			}
+			li:nth-of-type(6){
+				top:0;
+				transform:translateZ(0);
+			}
+			.chipsSquare{
+				width:40px;
+				height:40px;
+				float:left;
+				position:relative;
+				transform-style: preserve-3d;
+				
+			}
+			.chipsTriangle{
+				width:0;
+				height:0;
+				position:absolute;
+				left:0;
+				top:0;
+				border:20px solid transparent;
+				opacity:0.8;
+				transition:transform 8s;
+				
+			}
+			.chipsSquare>div:nth-of-type(1){
+				border-left-color:lightblue;
+			}
+			.chipsSquare>div:nth-of-type(2){
+				border-top-color:lightblue;
+			}
+			.chipsSquare>div:nth-of-type(3){
+				border-right-color:lightblue;
+			}
+			.chipsSquare>div:nth-of-type(4){
+				border-bottom-color:lightblue;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="img">
+			<img src="img/xingkong02.jpg" _src = "img/xingkong02.jpg" alt = '' />
+		</div>
+		<div id="cubeBox">
+			<ul id="cubeList">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+		
+		<div id="nav">
+			<div><a href="音乐可视化（注释版).html">音乐可视化</a></div>
+			<div><a href="全景图银河系.html">3D全景图</a></div>
+			<div><a href="4.html">正四面体</a></div>
+			<div class="active"><a href="6.html">正六面体</a></div>
+			<div><a href="8.html">正八面体</a></div>
+			<div><a href="12.html">正十二面体</a></div>
+			<div><a href="20.html">正二十面体</a></div>
+		</div>
+		<script>
+			var cubeBox = document.getElementById("cubeBox");
+			var cubeList = document.getElementById("cubeList");
+			var cubeLis = cubeList.getElementsByTagName("li");
+			var isMove = false;
+			//所有的li(面)铺满div(矩形);
+			var str = "";
+			for(var i = 0;i<cubeLis.length;i++){
+				str = "";
+				singleSquare(i);
+			}
+			function singleSquare(n){//第n个li(面)铺满div(矩形);
+				for(var i = 0;i<25;i++){
+					str += "<div class='chipsSquare'></div>";
+				}
+				cubeLis[n].innerHTML = str;
+			}
+			var chipsSquare = cubeList.getElementsByClassName("chipsSquare");
+			//所有的div(矩形)铺满div(三角形);
+			str = "";
+			for(var i = 0;i<chipsSquare.length;i++){
+				str = "";
+				singleTriangle(i);
+			}
+			function singleTriangle(n){//第n个div(矩形)铺满div(三角形)
+				for(var i = 0;i<4;i++){
+					str += "<div class = 'chipsTriangle'></div>";
+				}
+				chipsSquare[n].innerHTML = str;
+			}
+			var chipsTriangle = document.getElementsByClassName("chipsTriangle");
+			//旋转/抖动+停止旋转/抖动+清楚浏览器默认样式
+			var degX = 0;
+			var degY = 0;
+			var degZ = 0;
+			cubeList.timer = setInterval(function(){//旋转
+				degX += 1;
+				degY += 2;
+				degZ += 3;
+				degX %= 360;
+				degY %= 360;
+				degZ %= 360;
+				cubeList.style.transform = "rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+				console.log(2);
+			},50)
+		</script>
+		<script>
+			var cubeList = document.getElementById("cubeList");
+			var chipsTriangle = document.getElementsByClassName("chipsTriangle");
+			var img = document.getElementsByTagName("img")[0];
+			var isUp = false;//没有向上移动
+			var cubeNum = 0.8;
+			var cubeNum1 = 0;
+			var isMove = false;//没有抖动爆炸
+			var timer;
+			var clickNum = 0;
+			clickObj(cubeList);
+			function clickObj(objEle){
+				objEle.ondblclick = function(){
+					if(isMove){
+						return;
+					}
+					img.src = img.getAttribute("_src");
+					clearInterval(objEle.timer);
+					shakeBoom(objEle);//调用抖动爆炸函数；
+					return false;
+				}
+			}
+			document.onclick = function(){
+//		    	return false;
+		    }
+		    document.oncontextmenu = function(){
+				return false;
+		    }
+			document.onmousedown = function(){//阻止页面中内容被选中的
+				return false;
+			}
+			function shakeBoom(obj1){//抖动爆炸效果
+				timer = setInterval(function(){
+					cubeNum1++;
+					if(cubeNum1 >= 50){
+						boom();//调用爆炸函数；
+						clearInterval(timer);
+						cubeNum1 = 0;
+					}
+					if(isUp == false){
+						obj1.style.transform = "translateX(6px) translateY(6px) translateZ(6px) rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+						isUp = true;
+					}else{
+						obj1.style.transform = "translateX(-6px) translateY(-6px) translateZ(-6px) rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+						isUp = false;
+					}
+					isMove = true;
+					console.log(3);
+				},30)
+			}
+			function boom(){//爆炸效果
+				for(var i = 0;i<chipsTriangle.length;i++){//爆炸
+					chipsTriangle[i].style.transformOrigin = "center center -100px";
+					chipsTriangle[i].style.transform = "translateX("+Math.random()*1000+"px) translateY("+Math.random()*1000+"px) scaleX("+Math.random()*5+") scaleY("+Math.random()*5+") translateZ("+(Math.random()-0.5)*10000+"px)  rotateX("+Math.random()*1000+"deg) rotateY("+Math.random()*1000+"deg) rotateZ("+Math.random()*1000+"deg)  ";
+					isMove = true;
+				}
+				setTimeout(function(){//爆炸完后复原
+					for(var i = 0;i<chipsTriangle.length;i++){
+						chipsTriangle[i].style.transform = "scaleX(1) scaleY(1)";
+						chipsTriangle[i].style.transition = "3s";
+					}
+				},8010)
+				setTimeout(function(){//复原后消失并变色
+					timer = setInterval(function(){
+						cubeNum -= 0.1;
+						if(cubeNum<0){
+							cubeNum = 0;
+							clearInterval(timer);
+//							img.src = "img/xingkong01.jpg";
+							clickNum++;
+							if(clickNum%2 == 0){
+								for(var i = 0;i<chipsTriangle.length;i++){
+									switch(i%4){
+											case 0:
+												chipsTriangle[i].style.borderLeftColor = "lightblue";
+												break;
+											case 1:
+												chipsTriangle[i].style.borderTopColor = "lightblue";
+												break;
+											case 2:
+												chipsTriangle[i].style.borderRightColor = "lightblue";
+												break;
+											case 3:
+												chipsTriangle[i].style.borderBottomColor = "lightblue";
+												break;
+										}
+									}
+							}else{
+								for(var i = 0;i<chipsTriangle.length;i++){
+									switch(i%4){
+											case 0:
+												chipsTriangle[i].style.borderLeftColor = "#4F94CD";
+												break;
+											case 1:
+												chipsTriangle[i].style.borderTopColor = "#4F94CD";
+												break;
+											case 2:
+												chipsTriangle[i].style.borderRightColor = "#4F94CD";
+												break;
+											case 3:
+												chipsTriangle[i].style.borderBottomColor = "#4F94CD";
+												break;
+										}
+									}
+								}
+							}
+						for(var i = 0;i<chipsTriangle.length;i++){
+							chipsTriangle[i].style.opacity = cubeNum;
+						}
+						isMove = false;
+						console.log(4)
+					},16)
+				},9010)
+				setTimeout(function(){//消失后再重现
+					timer = setInterval(function(){
+						cubeNum += 0.1;
+						if(cubeNum >= 1){
+							cubeNum = 1;
+							clearInterval(timer);
+							cubeList.timer = setInterval(function(){//旋转
+								degX %= 360;
+								degY %= 360;
+								degZ %= 360;
+								cubeList.style.transform = "rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+								degX += 1;
+								degY += 2;
+								degZ += 3;
+								console.log(2);
+							},50)
+						}
+						for(var i = 0;i<chipsTriangle.length;i++){
+							chipsTriangle[i].style.opacity = cubeNum;
+							chipsTriangle[i].style.transition = "8s";
+						}
+					},16)
+					
+				},11000)
+				
+		}
+		</script>
+	</body>
+</html>

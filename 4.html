@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css.css"/>
+		<style type="text/css">
+			body{
+				background: #333;
+				margin: 0;
+				overflow: hidden;
+			}
+			#box_ff{
+				width: 400px;
+				height: 400px;
+				perspective: 800px;
+				margin: 100px auto;
+			}
+			#box_f{
+				width: 400px;
+				height: 400px;
+				transform-style: preserve-3d;
+				position: relative;
+			}
+			.box{
+				width: 400px;
+				height: 400px;
+				/*background: #FFF;*/
+				-webkit-clip-path: polygon(27px 300px,373px 300px,200px 0px);
+				position: absolute;
+				opacity: 0.8;
+				font: 100px/400px "微软雅黑";
+				text-align: center;
+				/*color: deepskyblue;*/
+				/*border: 10px solid #ddd;*/
+				/*box-sizing: border-box;*/
+				transition:transform 8s;
+				/*perspective: 1000px;*/
+			}
+			.box:nth-of-type(1){
+				transform:rotateX(19.5deg) translateZ(70px) ;
+			}
+			.box:nth-of-type(2){
+				transform: rotateY(-120deg) rotateX(19.5deg)  translateZ(70px) ;
+			}
+			.box:nth-of-type(3){
+				transform: rotateY(120deg) rotateX(19.5deg) translateZ(70px) ;
+			}
+			.box:nth-of-type(4){
+				transform: rotateX(90deg)  translateZ(-70px);
+			}
+			.chipsSquare{
+				width:40px;
+				height:40px;
+				float:left;
+				position:relative;
+				/*transform-style: preserve-3d;*/
+			}
+			.chipsTriangle{
+				width:0;
+				height:0;
+				position:absolute;
+				left:0;
+				top:0;
+				border:20px solid transparent;
+				opacity:0.8;
+				transition:transform 8s;
+				
+			}
+			.chipsSquare>div:nth-of-type(1){
+				border-left-color:#EE7AE9;
+			}
+			.chipsSquare>div:nth-of-type(2){
+				/*border-top-color:lightblue;*/
+			}
+			.chipsSquare>div:nth-of-type(3){
+				/*border-right-color:lightblue;*/
+			}
+			.chipsSquare>div:nth-of-type(4){
+				border-bottom-color:#EE00EE;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box_ff">
+			<div id="box_f">
+				<div class="box">妙</div>
+				<div class="box">味</div>
+				<div class="box">课</div>
+				<div class="box">堂</div>
+			</div>
+		</div>
+		
+		<div id="nav">
+			<div><a href="音乐可视化（注释版).html">音乐可视化</a></div>
+			<div><a href="全景图银河系.html">3D全景图</a></div>
+			<div class="active"><a href="4.html">正四面体</a></div>
+			<div><a href="6.html">正六面体</a></div>
+			<div><a href="8.html">正八面体</a></div>
+			<div><a href="12.html">正十二面体</a></div>
+			<div><a href="20.html">正二十面体</a></div>
+		</div>
+		<script type="text/javascript">
+			var box_f=document.getElementById('box_f');
+			var box = document.getElementsByClassName("box");
+			var str = "";
+			for(var i = 0;i<box.length;i++){
+				str = "";
+				singleSquare(i);
+			}
+			function singleSquare(n){//第n个li(面)铺满div(矩形);
+				for(var i = 0;i<100;i++){
+					str += "<div class='chipsSquare'></div>";
+				}
+				box[n].innerHTML = str;
+			}
+			var chipsSquare = document.getElementsByClassName("chipsSquare");
+			//所有的div(矩形)铺满div(三角形);
+			str = "";
+			for(var i = 0;i<chipsSquare.length;i++){
+				str = "";
+				singleTriangle(i);
+			}
+			function singleTriangle(n){//第n个div(矩形)铺满div(三角形)
+				for(var i = 0;i<4;i++){
+					str += "<div class = 'chipsTriangle'></div>";
+				}
+				chipsSquare[n].innerHTML = str;
+			}
+			var chipsTriangle = document.getElementsByClassName("chipsTriangle");
+			//旋转
+			var degX = 0;
+			var degY = 0;
+			var degZ = 0;
+			box_f.timer = setInterval(function(){
+				degX += 1;
+				degY += 2;
+				degZ += 3;
+				degX %= 360;
+				degY %= 360;
+				degZ %= 360;
+				box_f.style.transform = "rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+			},30)
+		</script>
+		<script>
+			var box_f = document.getElementById("box_f");
+			var isUp = false;//没有向上移动
+			var cubeNum = 0.8;
+			var cubeNum1 = 0;
+			var isMove = false;//没有抖动爆炸
+			var timer;
+			clickObj(box_f);
+			function clickObj(objEle){
+				objEle.ondblclick = function(){
+					if(isMove){
+						return;
+					}
+					clearInterval(objEle.timer);
+					shakeBoom(objEle);//调用抖动爆炸函数；
+					return false;
+				}
+			}
+			document.onclick = function(){
+//		    	return false;
+		    }
+		    document.oncontextmenu = function(){
+				return false;
+		    }
+			document.onmousedown = function(){//阻止页面中内容被选中的
+				return false;
+			}
+			function shakeBoom(obj1){//抖动爆炸效果
+				timer = setInterval(function(){
+					cubeNum1++;
+					if(cubeNum1 >= 50){
+						boom();//调用爆炸函数；
+						clearInterval(timer);
+						cubeNum1 = 0;
+					}
+					if(isUp == false){
+						obj1.style.transform = "translateX(6px) translateY(6px) translateZ(6px) rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+						isUp = true;
+						console.log(1);
+					}else{
+						obj1.style.transform = "translateX(-6px) translateY(-6px) translateZ(-6px) rotateX("+degX+"deg) rotateY("+degY+"deg) rotateZ("+degZ+"deg)";
+						isUp = false;
+						console.log(5);
+					}
+					isMove = true;
+					console.log(3);
+				},30)
+			}
+			function boom(){//爆炸效果
+				for(var i = 0;i<chipsTriangle.length;i++){
+					chipsTriangle[i].style.transform = "translateX("+Math.random()*1000+"px) translateY("+Math.random()*1000+"px) scaleX("+(Math.random()-0.5)+") scaleY("+(Math.random()-0.5)+") translateZ("+(Math.random()-0.5)*10000+"px)  rotateX("+Math.random()*1000+"deg) rotateY("+Math.random()*1000+"deg) rotateZ("+Math.random()*1000+"deg)  ";
+					isMove = true;
+				}
+//				setTimeout(function(){
+//					for(var i = 0;i<chipsTriangle.length;i++){
+//						chipsTriangle[i].style.transition = "3s";
+//						chipsTriangle[i].style.transform = "scaleX(1) scaleY(1)";
+//					}
+//				},8010)
+				setTimeout(function(){
+					timer = setInterval(function(){
+						cubeNum -= 0.01;
+						if(cubeNum<0){
+							cubeNum = 0;
+							clearInterval(timer);
+						}
+						for(var i = 0;i<chipsTriangle.length;i++){
+							chipsTriangle[i].style.opacity = cubeNum;
+						}
+						isMove = false;
+						console.log(4)
+					},16)
+				},8010)
+		}
+		</script>
+	</body>
+</html>
